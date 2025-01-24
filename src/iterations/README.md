@@ -7,11 +7,19 @@ We'll experience firsthand how TDD helps us evolve our design naturally and main
 
 ### Each iteration follows this pattern:
 
-- Story discussion (2 minutes)
-- Writing test together (5 minutes)
-- Implementation time (5 minutes)
-- Code review and refactoring (5 minutes)
+- Story discussion
+- Writing test together
+- Implementation time
+- Code review and refactoring
 
 ### Iterations
 
 [Iteration 1: Basic User Creation](01-basic-user-creation/README.md)
+
+[Iteration 2: Adding Persistence](02-adding-persistence/README.md)
+
+[Iteration 3: Preventing Duplicates](03-preventing-duplicates/README.md)
+
+[Iteration 4: Email Validation](04-email-validation/README.md)
+
+[Iteration 5: Phone Number](05-phone-number/README.md)
