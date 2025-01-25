@@ -1,4 +1,4 @@
-# Iteration 9: Add Account Locking
+# Iteration 9: Account Locking
 
 ## Story
 
