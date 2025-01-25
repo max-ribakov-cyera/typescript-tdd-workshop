@@ -2,29 +2,29 @@ import { DuplicateEmailError, UserService } from '../user-service';
 
 describe(UserService, () => {
   const email = 'jane@dev.com';
-  const fullName = 'Jane Developer';
+  const name = 'Jane Developer';
 
   it('should create a user with email and name', () => {
     const userService = new UserService();
 
-    const user = userService.createUser(email, fullName);
+    const user = userService.createUser(email, name);
 
-    expect(user).toMatchObject({ email: email, name: fullName });
+    expect(user).toMatchObject({ email: email, name: name });
   });
 
-  it('should store and retrieve created users', () => {
+  it('should store and retrieve created users by email', () => {
     const userService = new UserService();
 
-    const created = userService.createUser(email, fullName);
-    const retrieved = userService.findByEmail(email);
+    const created = userService.createUser(email, name);
+    const maybeUser = userService.findByEmail(email);
 
-    expect(retrieved).toEqual(created);
+    expect(maybeUser).toEqual(created);
   });
 
   it('should prevent duplicate email registration', () => {
     const userService = new UserService();
 
-    userService.createUser(email, fullName);
+    userService.createUser(email, name);
 
     expect(() => userService.createUser(email, 'Different Name')).toThrow(DuplicateEmailError);
   });
