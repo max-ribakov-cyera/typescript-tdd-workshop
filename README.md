@@ -2,9 +2,12 @@
 
 A comprehensive workshop on Test-Driven Development with TypeScript, covering best practices, patterns, and real-world examples.
 
+We'll build a User Service from the ground up using Test-Driven Development.
+We'll experience firsthand how TDD helps us evolve our design naturally and maintain high code quality. Let's dive in!
+
 ## Prerequisites
 
-- Node.js 16+
+- Node.js 18+
 - npm or yarn
 - TypeScript knowledge
 - Basic testing experience
@@ -29,12 +32,32 @@ npm test
 
 ## Workshop Structure
 
-1. Basic TDD (`/examples/01-basic-tdd`)
-2. Adding Persistence (`/examples/02-adding-persistence`)
-3. Error Handling (`/examples/03-error-handling`)
-4. Mocking Examples (`/examples/04-mocking-examples`)
-5. Best Practices (`/examples/05-best-practices`)
+### Each iteration follows this pattern:
 
-## Running the Examples
+- Story discussion
+- Writing test together
+- Implementation time
+- Code review and refactoring
 
-Each example directory contains its own README with specific instructions.
+**The Solution for each iteration is available in the following iteration.**
+Every iteration besides the first will have a **"Lessons Learned Section"** that will summarize the key takeaways from the previous iteration.
+
+### Iterations
+
+[Iteration 1: Basic User Creation](src/iterations/01-basic-user-creation/README.md)
+
+[Iteration 2: Adding Persistence](src/iterations/02-adding-persistence/README.md)
+
+[Iteration 3: Preventing Duplicates](src/iterations/03-preventing-duplicates/README.md)
+
+[Iteration 4: Email Validation](src/iterations/04-email-validation/README.md)
+
+[Iteration 5: Phone Number](src/iterations/05-phone-number/README.md)
+
+[Iteration 6: Address](src/iterations/06-address/README.md)
+
+[Iteration 7: User status](src/iterations/07-user-status/README.md)
+
+[Iteration 8: Logging](src/iterations/08-logging/README.md)
+
+[Iteration 9: Account Locking](src/iterations/09-account-locking/README.md)

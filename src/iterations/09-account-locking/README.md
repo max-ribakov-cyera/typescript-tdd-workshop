@@ -6,9 +6,7 @@ We've been getting reports from our support team that users are experiencing iss
 
 ### Lessons Learned:
 
-
-moving to a single test setup might cause dependencies between tests. This can be solved by adding a clean up function that runs after\before each test or using test data that won't be affected by other tests - a lib like faker is helpful in such cases. 
-
+moving to a single test setup might cause dependencies between tests. This can be solved by adding a clean up function that runs after\before each test or using test data that won't be affected by other tests - a lib like faker is helpful in such cases.
 
 ```typescript
 export function aUserCreationParams(

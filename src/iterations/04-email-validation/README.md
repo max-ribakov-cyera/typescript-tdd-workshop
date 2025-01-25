@@ -4,8 +4,7 @@
 
 Support tickets are coming in - users are entering invalid email addresses and getting confused when features don't work. We need proper email validation!
 
-*Add a naive email validation check.
-
+\*Add a naive email validation check.
 
 ### Lessons Learned:
 
@@ -23,16 +22,16 @@ Here’s how to define a custom error:
 
 ```typescript
 class DuplicateEmailError extends Error {
-    constructor(message: string) {
-        // Call the constructor of the base class `Error`
-        super(message);
+  constructor(message: string) {
+    // Call the constructor of the base class `Error`
+    super(message);
 
-        // Set the error name to your custom error class name         
-        this.name = "DuplicateEmailError"; 
-        
-        // Set the prototype explicitly to maintain the correct prototype chain
-        Object.setPrototypeOf(this, DuplicateEmailError.prototype);
-    }
+    // Set the error name to your custom error class name
+    this.name = 'DuplicateEmailError';
+
+    // Set the prototype explicitly to maintain the correct prototype chain
+    Object.setPrototypeOf(this, DuplicateEmailError.prototype);
+  }
 }
 ```
 
@@ -43,4 +42,3 @@ class DuplicateEmailError extends Error {
 - **Error Name**: Setting this.name to the name of your custom error class makes the error type clear when inspecting stack traces or logs.
 
 - **Prototype Chain**: The most critical step is setting the prototype chain correctly using Object.setPrototypeOf(this, CustomError.prototype). This ensures that instanceof checks work as expected, which is particularly important when TypeScript is transpiled to ES5.
-

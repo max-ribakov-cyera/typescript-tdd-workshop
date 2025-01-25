@@ -14,8 +14,7 @@ createUser(userCreationParams: UserCreationParams): User {
     // ...
     return user;
 }
- ```
-
+```
 
 It's hard to delete items from an array, map or set are better options.
 
