@@ -115,7 +115,7 @@ describe(UserService, () => {
     await expect(userService.login(email, password)).resolves.toBe('Great Success');
   });
 
-  it('@@CHALLENGE@@ should lock user account on the 3rd wrong password login attempt try for 5 minutes without jest.useFakeTimers', async () => {
+  it.skip('@@CHALLENGE@@ should lock user account on the 3rd wrong password login attempt try for 5 minutes without jest.useFakeTimers', async () => {
     expect(true).toBe(false);
   });
 });

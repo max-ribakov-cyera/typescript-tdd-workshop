@@ -9,7 +9,7 @@ describe(UserService, () => {
     expect(user).toMatchObject({ email: 'jane@dev.com', name: 'Jane Developer' });
   });
 
-  it('should store and retrieve created users by email', () => {
+  it.skip('should store and retrieve created users by email', () => {
     // const userService = new UserService();
     //
     // const created = userService.createUser('jane@dev.com', 'Jane Developer');
