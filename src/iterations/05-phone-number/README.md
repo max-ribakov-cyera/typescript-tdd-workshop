@@ -1,10 +1,6 @@
-# Iteration 5: Phone Number
+# Iteration 4: Email Validation
 
-## Story
-
-We've been getting feedback from users that they'd like to add their phone number to their profile so that they can receive notifications via SMS. Let's add phone number support to our user service.
-
-### Lessons Learned:
+## Key Takeaways:
 
 Better to group error messages together in a single place. This makes it easier to maintain and update error messages.
 
@@ -16,3 +12,9 @@ export class InvalidEmailError extends Error {
   // ...
 }
 ```
+
+# Iteration 5: Phone Number
+
+### Story
+
+We've been getting feedback from users that they'd like to add their phone number to their profile so that they can receive notifications via SMS. Let's add phone number support to our user service.

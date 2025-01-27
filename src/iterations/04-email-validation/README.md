@@ -1,12 +1,6 @@
-# Iteration 4: Email Validation
+# Iteration 3: Preventing Duplicates
 
-## Story
-
-Support tickets are coming in - users are entering invalid email addresses and getting confused when features don't work. We need proper email validation!
-
-\*Add a naive email validation check.
-
-### Lessons Learned:
+## Key Takeaways:
 
 use `() => { /* ACT code */ }` in `expect()` to assert on thrown errors for non async functions
 
@@ -42,3 +36,11 @@ class DuplicateEmailError extends Error {
 - **Error Name**: Setting this.name to the name of your custom error class makes the error type clear when inspecting stack traces or logs.
 
 - **Prototype Chain**: The most critical step is setting the prototype chain correctly using Object.setPrototypeOf(this, CustomError.prototype). This ensures that instanceof checks work as expected, which is particularly important when TypeScript is transpiled to ES5.
+
+# Iteration 4: Email Validation
+
+### Story
+
+Support tickets are coming in - users are entering invalid email addresses and getting confused when features don't work. We need proper email validation!
+
+\*Add a naive email validation check.

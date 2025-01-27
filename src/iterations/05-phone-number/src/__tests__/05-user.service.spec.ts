@@ -1,4 +1,5 @@
-import { DuplicateEmailError, UserService } from '../user-service';
+import { UserService } from '../user-service';
+import { DuplicateEmailError, InvalidEmailError } from '../errors';
 
 describe(UserService, () => {
   const email = 'jane@dev.com';
@@ -30,6 +31,12 @@ describe(UserService, () => {
   });
 
   it('should validate email format', () => {
-    expect(true).toBe(true);
+    const userService = new UserService();
+
+    expect(() => userService.createUser('invalid-email', name)).toThrow(InvalidEmailError);
+  });
+
+  it('should create a user with a phone number and retrieve him by it', () => {
+    expect(true).toBe(false);
   });
 });

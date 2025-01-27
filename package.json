@@ -16,15 +16,15 @@
   "license": "ISC",
   "description": "A comprehensive TDD workshop with TypeScript",
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
     "adze": "^2.2.0",
-    "nodemailer": "^6.10.0",
+    "bcrypt": "^5.1.1",
     "tslog": "^4.9.3"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.4.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.9",
-    "@types/nodemailer": "^6.4.17",
     "eslint": "^9.18.0",
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-prettier": "^5.2.3",

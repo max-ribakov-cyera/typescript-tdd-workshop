@@ -1,6 +1,7 @@
 import { UserService } from '../user-service';
 import { DuplicateEmailError, InvalidEmailError } from '../errors';
-import { aUser } from './builders';
+import { aUserCreationParams } from './builders';
+import { UserStatus } from '../domain';
 
 describe(UserService, () => {
   const email = 'jane@dev.com';
@@ -9,7 +10,7 @@ describe(UserService, () => {
   it('should create a user with email and name', () => {
     const userService = new UserService();
 
-    const user = userService.createUser(aUser({ email, name }));
+    const user = userService.createUser(aUserCreationParams({ email, name }));
 
     expect(user).toMatchObject({ email, name });
   });
@@ -17,7 +18,7 @@ describe(UserService, () => {
   it('should store and retrieve created users by email', () => {
     const userService = new UserService();
 
-    const created = userService.createUser(aUser({ email }));
+    const created = userService.createUser(aUserCreationParams({ email }));
     const maybeUser = userService.findByEmail(email);
 
     expect(maybeUser).toEqual(created);
@@ -26,17 +27,17 @@ describe(UserService, () => {
   it('should prevent duplicate email registration', () => {
     const userService = new UserService();
 
-    userService.createUser(aUser({ email, name }));
+    userService.createUser(aUserCreationParams({ email, name }));
 
-    expect(() => userService.createUser(aUser({ email, name: 'Different Name' }))).toThrow(
-      DuplicateEmailError
-    );
+    expect(() =>
+      userService.createUser(aUserCreationParams({ email, name: 'Different Name' }))
+    ).toThrow(DuplicateEmailError);
   });
 
   it('should validate email format', () => {
     const userService = new UserService();
 
-    expect(() => userService.createUser(aUser({ email: 'invalid-email' }))).toThrow(
+    expect(() => userService.createUser(aUserCreationParams({ email: 'invalid-email' }))).toThrow(
       InvalidEmailError
     );
   });
@@ -44,7 +45,7 @@ describe(UserService, () => {
   it('should create a user with a phone number and retrieve him by it', () => {
     const userService = new UserService();
     const user = userService.createUser(
-      aUser({ name: 'user-with-phone', phoneNumber: '555-555-5555' })
+      aUserCreationParams({ name: 'user-with-phone', phoneNumber: '555-555-5555' })
     );
     expect(user).toMatchObject({ phoneNumber: '555-555-5555' });
 
@@ -58,12 +59,24 @@ describe(UserService, () => {
   it('should create user with an address', () => {
     const userService = new UserService();
     const user = userService.createUser(
-      aUser({ name: 'user-with-address', address: '123 Main St' })
+      aUserCreationParams({ name: 'user-with-address', address: '123 Main St' })
     );
     expect(user).toMatchObject({ address: '123 Main St' });
   });
 
   it('should create user with status Pending and allow to update it', () => {
-    expect(true).toBe(true);
+    const userService = new UserService();
+    const user = userService.createUser(aUserCreationParams({ email, name }));
+
+    expect(user.status).toBe(UserStatus.PENDING);
+
+    userService.activateUser(user.email);
+
+    const maybeUser = userService.findByEmail(email);
+    expect(maybeUser).toMatchObject({ status: UserStatus.ACTIVE });
+  });
+
+  it('should allow to add logs', () => {
+    expect(true).toBe(false);
   });
 });

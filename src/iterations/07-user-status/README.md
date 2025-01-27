@@ -1,14 +1,10 @@
-# Iteration 7: User status
+# Iteration 6: Address
 
-## Story
-
-We've been getting reports from our support team that users are experiencing issues with their accounts. We need to add logging to our user service so we can better understand what's going on.
-
-### Lessons Learned:
+## Key Takeaways:
 
 #### Beautiful Object Builders in TypeScript
 
-Fixtures - hard coded values, residing either in external files, or in the test file itself - are a bad approach; they inadvertently couple tests to each other, and when trying to solve this problem, we end up with too many fixtures.
+**Fixtures** - hard coded values, residing either in external files, or in the test file itself - are a bad approach; they inadvertently couple tests to each other, and when trying to solve this problem, we end up with too many fixtures.
 
 ```typescript
 // BAD
@@ -26,3 +22,9 @@ export function aUser(partialUser: Partial<User> = {}): User {
     };
 });
 ```
+
+# Iteration 7: User status
+
+#### Story
+
+We've been getting reports from our support team that users are experiencing issues with their accounts. We need to add logging to our user service so we can better understand what's going on.

@@ -1,11 +1,6 @@
-# Iteration 2: Adding Persistence
+# Iteration 1: Basic User Creation
 
-## Story
-
-Great news! DevConnect is getting traction. We need to actually store our users somewhere so we
-can retrieve them later. Let's start with the simplest possible storage - an in-memory array.
-
-### Lessons Learned:
+## Key Takeaways
 
 ```typescript
 expect(user.email).toBe('jane@dev.com');
@@ -20,3 +15,10 @@ Try to keep a single assertion per test. This makes it easier to understand what
 ```typescript
 expect(user).toMatchObject({ email: 'jane@dev.com', name: 'Jane Developer' });
 ```
+
+# Iteration 2: Adding Persistence
+
+### Story
+
+Great news! DevConnect is getting traction. We need to actually store our users somewhere so we
+can retrieve them later. Let's start with the simplest possible storage - an in-memory array.

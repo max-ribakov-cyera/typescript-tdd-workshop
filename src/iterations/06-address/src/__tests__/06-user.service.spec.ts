@@ -65,6 +65,6 @@ describe(UserService, () => {
   });
 
   it('should create user with an address', () => {
-    expect(true).toBe(true);
+    expect(true).toBe(false);
   });
 });
