@@ -65,9 +65,8 @@ describe(UserService, () => {
     expect(user).toMatchObject({ address: '123 Main St' });
   });
 
-  describe('Performance Tests', () => {
+  describe('performance of', () => {
     const userService = new UserService();
-
     const numOfUsers = 100000;
     const numOfUsersToSearch = 10;
 
@@ -116,7 +115,7 @@ describe(UserService, () => {
       console.log('timeToPopulate:', timeToPopulate);
     });
 
-    test(`findByEmail of ${numOfUsersToSearch} random users should be less than a millisecond`, async () => {
+    test(`findByEmail for ${numOfUsersToSearch} random users should be less than 5 milliseconds`, async () => {
       const durationByEmail = await trackDuration(
         async (index) => userService.findByEmail(randomUsersToSearch[index].email),
         numOfUsersToSearch
@@ -126,7 +125,7 @@ describe(UserService, () => {
       expect(durationByEmail).toBeLessThan(5);
     });
 
-    test(`findByPhoneNumber of ${numOfUsersToSearch} random users should be less than a millisecond`, async () => {
+    test(`findByPhoneNumber for ${numOfUsersToSearch} random users should be less than a 5 milliseconds`, async () => {
       const durationByPhone = await trackDuration(
         async (index) => userService.findByPhoneNumber(randomUsersToSearch[index].phoneNumber),
         numOfUsersToSearch

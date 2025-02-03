@@ -9,6 +9,7 @@ bulk insert is a good way to insert multiple records at once.
 but hash password is a blocker for bulk insert.
 
 ```typescript
+
 ```
 
 # Iteration 11: Email Service
