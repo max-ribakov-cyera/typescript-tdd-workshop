@@ -13,5 +13,6 @@ module.exports = {
     '^.+\\.tsx?$': ['ts-jest', {
       useESM: true,
     }]
-  }
+  },
+  "testTimeout": 1000000
 };

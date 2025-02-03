@@ -1,9 +1,8 @@
-import { User } from './domain';
 import { DuplicateEmailError, InvalidEmailError } from './errors';
+import { User } from './domain';
 
 export class UserService {
-  private usersByEmail: Map<string, User> = new Map();
-  private usersByPhoneNumber: Map<string, User> = new Map();
+  private users: User[] = [];
 
   createUser(user: User): User {
     const { email, phoneNumber } = user;
@@ -20,16 +19,15 @@ export class UserService {
       throw new DuplicateEmailError('Phone number already registered');
     }
 
-    this.usersByEmail.set(email, user);
-    this.usersByPhoneNumber.set(phoneNumber, user);
+    this.users.push(user);
     return user;
   }
 
   findByEmail(email: string): User | undefined {
-    return this.usersByEmail.get(email);
+    return this.users.find((user) => user.email === email);
   }
 
   findByPhoneNumber(phone: string): User | undefined {
-    return this.usersByPhoneNumber.get(phone);
+    return this.users.find((user) => user.phoneNumber === phone);
   }
 }

@@ -15,11 +15,11 @@ export class UserService {
   private users: User[] = [];
 
   createUser(email: string, name: string): User {
-    const user = { email, name };
-
     if (this.findByEmail(email)) {
-      throw new DuplicateEmailError('Email already registered');
+      throw new DuplicateEmailError(email);
     }
+
+    const user = { email, name };
     this.users.push(user);
     return user;
   }

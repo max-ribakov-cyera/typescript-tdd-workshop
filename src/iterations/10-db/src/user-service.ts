@@ -2,12 +2,12 @@ import { DuplicateEmailError, InvalidEmailError } from './errors';
 import { User, UserCreationParams, UserStatus } from './domain';
 import { Logger } from './logger';
 import bcrypt from 'bcrypt';
-import { InMemoryUserServiceRepository } from './in-memory-user-service-repository';
+import { InMemoryUsersRepository } from './repository';
 import { TimeServer } from './time-server';
 
 export class UserService {
   constructor(
-    private readonly repository: InMemoryUserServiceRepository,
+    private readonly repository: InMemoryUsersRepository,
     private readonly timeServer: TimeServer,
     private readonly logger: Logger
   ) {}
@@ -51,17 +51,20 @@ export class UserService {
       if (user.userLockExpiration !== undefined && user.userLockExpiration > currentTime) {
         return 'User is locked';
       } else {
-        this.repository.updateUser(user, { failedLoginAttempts: 0, userLockExpiration: undefined });
+        this.repository.updateUser(email, {
+          failedLoginAttempts: 0,
+          userLockExpiration: undefined
+        });
       }
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.hashedPassword);
     if (!isPasswordCorrect) {
-      this.repository.updateUser(user, { failedLoginAttempts: user.failedLoginAttempts + 1 });
+      this.repository.updateUser(email, { failedLoginAttempts: user.failedLoginAttempts + 1 });
 
       if (user.failedLoginAttempts === 2) {
         const userLockExpiration = new Date(currentTime.getTime() + 1000 * 60 * 5);
-        this.repository.updateUser(user, {
+        this.repository.updateUser(email, {
           userLockExpiration
         });
         return 'User is locked';
@@ -82,9 +85,6 @@ export class UserService {
   }
 
   activateUser(email: string): void {
-    const user = this.findByEmail(email);
-    if (user) {
-      this.repository.updateUser(user, { status: UserStatus.ACTIVE });
-    }
+    this.repository.updateUser(email, { status: UserStatus.ACTIVE });
   }
 }

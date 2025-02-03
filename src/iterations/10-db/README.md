@@ -27,3 +27,17 @@ timeServer.getCurrentTime.mockReturnValue(new Date(Date.now() + 1000 * 60 * 6));
 
 DevConnect is growing! Time to switch from in-memory storage to a real database.
 Thanks to our thorough test suite, we can be confident in our new implementation.
+
+Change the UserServiceRepository to be async interface and implement it with a real database.
+
+```typescript
+export interface UserServiceRepository {
+  addUser(user: User): Promise<void>;
+
+  updateUser(email: string, update: Partial<User>): Promise<void>;
+
+  findUserByEmail(email: string): Promise<User | undefined>;
+
+  findByPhoneNumber(phone: string): Promise<User | undefined>;
+}
+```

@@ -1,5 +1,5 @@
-import { User } from './domain';
 import { DuplicateEmailError, InvalidEmailError } from './errors';
+import { User } from './domain';
 
 export class UserService {
   private usersByEmail: Map<string, User> = new Map();
@@ -16,12 +16,9 @@ export class UserService {
       throw new DuplicateEmailError('Email already registered');
     }
 
-    if (this.findByPhoneNumber(phoneNumber)) {
-      throw new DuplicateEmailError('Phone number already registered');
-    }
-
     this.usersByEmail.set(email, user);
     this.usersByPhoneNumber.set(phoneNumber, user);
+
     return user;
   }
 

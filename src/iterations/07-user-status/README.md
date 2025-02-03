@@ -4,23 +4,19 @@
 
 #### Beautiful Object Builders in TypeScript
 
-**Fixtures** - hard coded values, residing either in external files, or in the test file itself - are a bad approach; they inadvertently couple tests to each other, and when trying to solve this problem, we end up with too many fixtures.
+moving to a single test setup might cause dependencies between tests. This can be solved by adding a clean up function that runs after\before each test or using test data that won't be affected by other tests - a lib like faker is helpful in such cases.
 
 ```typescript
 // BAD
-const user: User = {
-    name: 'John Doe',
-    // ...
-};
-
-// GOOD (but can be improved)
 export function aUser(partialUser: Partial<User> = {}): User {
   return {
-    email: 'someEmail@domain.com',
-    // ...
-    ...partialUser,]
-    };
-});
+    email: faker.internet.email(),
+    address: faker.location.streetAddress(),
+    name: faker.person.fullName(),
+    phoneNumber: faker.phone.number(),
+    ...partialUser
+  };
+}
 ```
 
 # Iteration 7: User status

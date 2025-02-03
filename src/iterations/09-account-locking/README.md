@@ -2,22 +2,20 @@
 
 ## Key Takeaways:
 
-moving to a single test setup might cause dependencies between tests. This can be solved by adding a clean up function that runs after\before each test or using test data that won't be affected by other tests - a lib like faker is helpful in such cases.
+use jest-mock-extended to quickly mock a dependency in a test.
 
 ```typescript
-export function aUserCreationParams(
-  partialUser: Partial<UserCreationParams> = {}
-): UserCreationParams {
-  return {
-    email: faker.internet.email(),
-    address: faker.location.streetAddress(),
-    name: faker.person.fullName(),
-    phoneNumber: faker.phone.number(),
-    ...partialUser
-  };
-}
-});
+const logger = mock<Logger>();
+const userService = new UserService(new InMemoryUsersRepository(), logger);
+
+// ...
+
+expect(logger.info).toHaveBeenCalledWith('User created', user);
 ```
+
+It's a nice touch to leave documentation in the code in form of learning tests.
+Learning tests are tests that are written to learn how a certain piece of code works.
+Not to test it, but to learn from it.
 
 # Iteration 9: Account Locking
 
@@ -30,7 +28,7 @@ As part of enhancing the security of our user authentication system, we need to 
 #### Password Management:
 
 - Users should be able to set a password during account creation.
-- Passwords should be securely hashed before storing them.
+- Passwords should be securely hashed before storing them. Use bcrypt to hash passwords.
 - Users should be able to log in using their email and password.
 
 #### Account Locking:

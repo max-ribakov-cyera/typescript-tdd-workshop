@@ -2,8 +2,21 @@ import { DuplicateEmailError, InvalidEmailError } from './errors';
 import { User, UserCreationParams, UserStatus } from './domain';
 import { Logger } from './logger';
 import bcrypt from 'bcrypt';
-import { UserServiceRepository } from './in-memory-user-service-repository';
+import { UserServiceRepository } from './repository';
 import { TimeServer } from './time-server';
+
+export async function toUser(userCreationParams: UserCreationParams): Promise<User> {
+  const { password, ...commonUserProps } = userCreationParams;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  return {
+    ...commonUserProps,
+    status: UserStatus.PENDING,
+    hashedPassword,
+    failedLoginAttempts: 0
+  };
+}
 
 export class UserService {
   constructor(
@@ -13,16 +26,7 @@ export class UserService {
   ) {}
 
   async createUser(userCreationParams: UserCreationParams): Promise<User> {
-    const { password, ...commonUserProps } = userCreationParams;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user: User = {
-      ...commonUserProps,
-      status: UserStatus.PENDING,
-      hashedPassword,
-      failedLoginAttempts: 0
-    };
+    const user = await toUser(userCreationParams);
     const { email } = user;
 
     if (!email.includes('@')) {
@@ -48,10 +52,14 @@ export class UserService {
     const currentTime = this.timeServer.getCurrentTime();
 
     if (user.failedLoginAttempts >= 3) {
-      if (user.userLockExpiration !== undefined && user.userLockExpiration > currentTime) {
+      if (
+        user.userLockExpiration !== undefined &&
+        user.userLockExpiration !== null &&
+        user.userLockExpiration > currentTime
+      ) {
         return 'User is locked';
       } else {
-        await this.repository.updateUser(user, {
+        await this.repository.updateUser(email, {
           failedLoginAttempts: 0,
           userLockExpiration: undefined
         });
@@ -60,11 +68,13 @@ export class UserService {
 
     const isPasswordCorrect = await bcrypt.compare(password, user.hashedPassword);
     if (!isPasswordCorrect) {
-      await this.repository.updateUser(user, { failedLoginAttempts: user.failedLoginAttempts + 1 });
+      await this.repository.updateUser(email, {
+        failedLoginAttempts: user.failedLoginAttempts + 1
+      });
 
       if (user.failedLoginAttempts === 2) {
         const userLockExpiration = new Date(currentTime.getTime() + 1000 * 60 * 5);
-        await this.repository.updateUser(user, {
+        await this.repository.updateUser(email, {
           userLockExpiration
         });
         return 'User is locked';
@@ -85,9 +95,6 @@ export class UserService {
   }
 
   async activateUser(email: string): Promise<void> {
-    const user = await this.findByEmail(email);
-    if (user) {
-      await this.repository.updateUser(user, { status: UserStatus.ACTIVE });
-    }
+    await this.repository.updateUser(email, { status: UserStatus.ACTIVE });
   }
 }

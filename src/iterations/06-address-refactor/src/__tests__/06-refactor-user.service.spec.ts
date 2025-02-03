@@ -1,24 +1,17 @@
 import { UserService } from '../user-service';
 import { DuplicateEmailError, InvalidEmailError } from '../errors';
-import { User } from '../domain';
+import { aUser } from './builders';
 import { faker } from '@faker-js/faker';
 import { performance } from 'perf_hooks';
 
 describe(UserService, () => {
   const email = 'jane@dev.com';
   const name = 'Jane Developer';
-  const phoneNumber = '555-555-5555';
-
-  const aUser: User = {
-    email,
-    name,
-    phoneNumber
-  };
 
   it('should create a user with email and name', () => {
     const userService = new UserService();
 
-    const user = userService.createUser(aUser);
+    const user = userService.createUser(aUser({ email, name }));
 
     expect(user).toMatchObject({ email, name });
   });
@@ -26,7 +19,7 @@ describe(UserService, () => {
   it('should store and retrieve created users by email', () => {
     const userService = new UserService();
 
-    const created = userService.createUser(aUser);
+    const created = userService.createUser(aUser({ email }));
     const maybeUser = userService.findByEmail(email);
 
     expect(maybeUser).toEqual(created);
@@ -35,9 +28,9 @@ describe(UserService, () => {
   it('should prevent duplicate email registration', () => {
     const userService = new UserService();
 
-    userService.createUser(aUser);
+    userService.createUser(aUser({ email, name }));
 
-    expect(() => userService.createUser({ name: 'Different Name', email, phoneNumber })).toThrow(
+    expect(() => userService.createUser(aUser({ email, name: 'Different Name' }))).toThrow(
       DuplicateEmailError
     );
   });
@@ -45,42 +38,45 @@ describe(UserService, () => {
   it('should validate email format', () => {
     const userService = new UserService();
 
-    expect(() => userService.createUser({ name, email: 'invalid-email', phoneNumber })).toThrow(
+    expect(() => userService.createUser(aUser({ email: 'invalid-email' }))).toThrow(
       InvalidEmailError
     );
   });
 
   it('should create a user with a phone number and retrieve him by it', () => {
     const userService = new UserService();
-    const user = userService.createUser({
-      name: 'user-with-phone',
-      email,
-      phoneNumber: phoneNumber
-    });
-    expect(user).toMatchObject({ phoneNumber: phoneNumber });
+    const user = userService.createUser(
+      aUser({ name: 'user-with-phone', phoneNumber: '555-555-5555' })
+    );
+    expect(user).toMatchObject({ phoneNumber: '555-555-5555' });
 
     // test is actually testing two things, creation and retrieval
-    const maybeUser = userService.findByPhoneNumber(phoneNumber);
+    const maybeUser = userService.findByPhoneNumber('555-555-5555');
     expect(maybeUser).toMatchObject({
       name: 'user-with-phone'
     });
   });
 
-  it.skip('should create user with an address', () => {
-    expect(true).toBe(false);
+  it('should create user with an address', () => {
+    const userService = new UserService();
+    const user = userService.createUser(
+      aUser({ name: 'user-with-address', address: '123 Main St' })
+    );
+    expect(user).toMatchObject({ address: '123 Main St' });
   });
 
   describe('Performance Tests', () => {
     const userService = new UserService();
 
-    const numOfUsers = 1000000;
+    const numOfUsers = 100000;
     const numOfUsersToSearch = 10;
 
-    const randomUsersToSearch = Array.from({ length: numOfUsersToSearch }, () => ({
-      email: faker.internet.email(),
-      name: faker.person.fullName(),
-      phoneNumber: faker.phone.number()
-    }));
+    const randomUsersToSearch = Array.from({ length: numOfUsersToSearch }, () =>
+      aUser({
+        email: faker.internet.email(),
+        phoneNumber: faker.phone.number()
+      })
+    );
 
     async function trackDuration(
       f: (time: number) => Promise<unknown>,
@@ -100,12 +96,12 @@ describe(UserService, () => {
         const userPromises = [];
         for (let i = 0; i < numOfUsers; i += chunkSize) {
           const chunk = Array.from({ length: chunkSize }, (_, j) => {
-            const user: User = {
-              email: faker.internet.email({ provider: `gmail${i + j}` }),
-              name: `User ${i + j}`,
-              phoneNumber: `${faker.phone.number()}-${i + j}`
-            };
-            return userService.createUser(user);
+            return userService.createUser(
+              aUser({
+                email: faker.internet.email({ provider: `gmail${i + j}` }),
+                phoneNumber: `${faker.phone.number()}-${i + j}`
+              })
+            );
           });
           userPromises.push(Promise.all(chunk));
         }

@@ -1,6 +1,6 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { Sequelize, DataTypes, Model } from 'sequelize';
 import { User } from './domain';
-import { UserServiceRepository } from './in-memory-user-service-repository';
+import { UserServiceRepository } from './repository';
 
 const sequelize = new Sequelize('sqlite::memory:', {
   dialect: 'sqlite',
@@ -16,19 +16,30 @@ UserModel.init(
       primaryKey: true
     },
     name: DataTypes.STRING,
-    phoneNumber: DataTypes.STRING,
+    phoneNumber: {
+      type: DataTypes.STRING
+    },
     address: DataTypes.STRING,
     status: DataTypes.STRING,
     hashedPassword: DataTypes.STRING,
-    failedLoginAttempts: DataTypes.NUMBER
+    failedLoginAttempts: DataTypes.INTEGER,
+    userLockExpiration: {
+      type: DataTypes.DATE,
+      allowNull: true
+    }
   },
   {
     sequelize,
-    modelName: 'User'
+    modelName: 'User',
+    indexes: [
+      {
+        fields: ['phoneNumber']
+      }
+    ]
   }
 );
 
-export class InMemoryPostgresUserServiceRepository implements UserServiceRepository {
+export class SQLiteUserServiceRepository implements UserServiceRepository {
   constructor() {
     void this.initialize();
   }
@@ -41,12 +52,16 @@ export class InMemoryPostgresUserServiceRepository implements UserServiceReposit
     await UserModel.create(user);
   }
 
-  async updateUser(user: User, update: Partial<User>): Promise<void> {
-    const userFromDb = await this.findUserByEmail(user.email);
+  async addUsers(users: User[]): Promise<void> {
+    await UserModel.bulkCreate(users);
+  }
+
+  async updateUser(email: string, update: Partial<User>): Promise<void> {
+    const userFromDb = await this.findUserByEmail(email);
     if (!userFromDb) {
       throw new Error('User not found');
     }
-    await UserModel.update(update, { where: { email: user.email } });
+    await UserModel.update(update, { where: { email } });
   }
 
   async findUserByEmail(email: string): Promise<User | undefined> {

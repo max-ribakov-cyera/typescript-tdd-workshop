@@ -13,37 +13,39 @@ describe(UserService, () => {
   const userService = new UserService(new InMemoryUsersRepository(), logger);
 
   describe('product', () => {
-    it('should create a user with email and name', () => {
-      const user = userService.createUser(
+    it('should create a user with email and name', async () => {
+      const user = await userService.createUser(
         aUserCreationParams({ email: 'jane@dev.com', name: 'Jane Developer' })
       );
 
       expect(user).toMatchObject({ email: 'jane@dev.com', name: 'Jane Developer' });
     });
 
-    it('should store and retrieve created users by email', () => {
-      const created = userService.createUser(aUserCreationParams({ email: 'retrive@byEmail.com' }));
+    it('should store and retrieve created users by email', async () => {
+      const created = await userService.createUser(
+        aUserCreationParams({ email: 'retrive@byEmail.com' })
+      );
       const maybeUser = userService.findByEmail('retrive@byEmail.com');
 
       expect(maybeUser).toEqual(created);
     });
 
-    it('should prevent duplicate email registration', () => {
-      userService.createUser(aUserCreationParams({ email: 'duplicate@email.com' }));
+    it('should prevent duplicate email registration', async () => {
+      await userService.createUser(aUserCreationParams({ email: 'duplicate@email.com' }));
 
-      expect(() =>
+      await expect(
         userService.createUser(aUserCreationParams({ email: 'duplicate@email.com' }))
-      ).toThrow(DuplicateEmailError);
+      ).rejects.toThrow(DuplicateEmailError);
     });
 
-    it('should validate email format', () => {
-      expect(() => userService.createUser(aUserCreationParams({ email: 'invalid-email' }))).toThrow(
-        InvalidEmailError
-      );
+    it('should validate email format', async () => {
+      await expect(
+        userService.createUser(aUserCreationParams({ email: 'invalid-email' }))
+      ).rejects.toThrow(InvalidEmailError);
     });
 
-    it('should create a user with a phone number and retrieve him by it', () => {
-      const user = userService.createUser(
+    it('should create a user with a phone number and retrieve him by it', async () => {
+      const user = await userService.createUser(
         aUserCreationParams({ name: 'user-with-phone', phoneNumber: '555-555-5555' })
       );
       expect(user).toMatchObject({ phoneNumber: '555-555-5555' });
@@ -55,13 +57,13 @@ describe(UserService, () => {
       });
     });
 
-    it('should create user with an address', () => {
-      const user = userService.createUser(aUserCreationParams({ address: '123 Main St' }));
+    it('should create user with an address', async () => {
+      const user = await userService.createUser(aUserCreationParams({ address: '123 Main St' }));
       expect(user).toMatchObject({ address: '123 Main St' });
     });
 
-    it('should create user with status Pending and allow to update it', () => {
-      const user = userService.createUser(aUserCreationParams({ email: 'pending@user.com' }));
+    it('should create user with status Pending and allow to update it', async () => {
+      const user = await userService.createUser(aUserCreationParams({ email: 'pending@user.com' }));
 
       expect(user.status).toBe(UserStatus.PENDING);
 
@@ -71,17 +73,45 @@ describe(UserService, () => {
       expect(maybeUser).toMatchObject({ status: UserStatus.ACTIVE });
     });
 
-    it('should allow to add logs', () => {
-      const user = userService.createUser(aUserCreationParams());
+    it('should allow to add logs', async () => {
+      const user = await userService.createUser(aUserCreationParams());
 
       expect(logger.info).toHaveBeenCalledWith('User created', user);
     });
 
-    it.skip('should allow users to login with password', () => {
-      expect(true).toBe(false);
+    it('should allow users to login with password', async () => {
+      const email = 'with@password.com';
+      const password = 'my-secret-password';
+      await userService.createUser(aUserCreationParams({ email, password: password }));
+
+      await expect(userService.login(email, 'not-my-secret-password')).resolves.toBe(
+        'Invalid password'
+      );
+
+      await expect(userService.login(email, password)).resolves.toBe('Great Success');
     });
 
-    it.skip('should lock user account on the 3rd wrong password login attempt try for 5 minutes', () => {
+    it('should lock user account on the 3rd wrong password login attempt try for 5 minutes', async () => {
+      jest.useFakeTimers();
+
+      const email = 'forgot-my@password.com';
+      const password = 'my-secret-password';
+      const wrongPassword = 'wrong-password';
+
+      await userService.createUser(aUserCreationParams({ email, password }));
+
+      await userService.login(email, wrongPassword);
+      await userService.login(email, wrongPassword);
+      await expect(userService.login(email, wrongPassword)).resolves.toBe('User is locked');
+      await expect(userService.login(email, password)).resolves.toBe('User is locked');
+
+      jest.advanceTimersByTime(1000 * 60 * 6);
+
+      await expect(userService.login(email, password)).resolves.toBe('Great Success');
+    });
+
+    it.skip('@@CHALLENGE@@ should lock user account on the 3rd wrong password login attempt try for 5 minutes without jest.useFakeTimers', async () => {
+      // skip the previous test and implement this one
       expect(true).toBe(false);
     });
   });
@@ -125,8 +155,8 @@ describe(UserService, () => {
           userPromises.push(Promise.all(chunk));
         }
 
-        randomUsersToSearch.forEach((user) => {
-          userService.createUser(user);
+        randomUsersToSearch.forEach(async (user) => {
+          await userService.createUser(user);
         });
 
         await Promise.all(userPromises);
@@ -180,12 +210,12 @@ describe(UserService, () => {
       mockConsoleLog(true, false);
     });
 
-    it('should log user creation with ts logger', () => {
+    it('should log user creation with ts logger', async () => {
       const userServiceWithTslogLogger = new UserService(
         new InMemoryUsersRepository(),
         new TslogLooger()
       );
-      userServiceWithTslogLogger.createUser(aUserCreationParams());
+      await userServiceWithTslogLogger.createUser(aUserCreationParams());
 
       expect(getConsoleLog()).toContain('User created');
     });

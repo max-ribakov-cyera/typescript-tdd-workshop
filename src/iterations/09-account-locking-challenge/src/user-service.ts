@@ -2,11 +2,13 @@ import { DuplicateEmailError, InvalidEmailError } from './errors';
 import { User, UserCreationParams, UserStatus } from './domain';
 import { Logger } from './logger';
 import bcrypt from 'bcrypt';
+import { InMemoryUsersRepository } from './repository';
 
 export class UserService {
-  private users: Map<string, User> = new Map();
-
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private readonly repository: InMemoryUsersRepository,
+    private readonly logger: Logger
+  ) {}
 
   async createUser(userCreationParams: UserCreationParams): Promise<User> {
     const { password, ...commonUserProps } = userCreationParams;
@@ -28,7 +30,8 @@ export class UserService {
     if (this.findByEmail(email)) {
       throw new DuplicateEmailError('Email already registered');
     }
-    this.users.set(email, user);
+
+    this.repository.addUser(user);
 
     this.logger.info('User created', user);
     return user;
@@ -44,18 +47,20 @@ export class UserService {
       if (user.userLockExpiration && user.userLockExpiration > new Date()) {
         return 'User is locked';
       } else {
-        this.users.set(email, { ...user, failedLoginAttempts: 0, userLockExpiration: undefined });
+        this.repository.updateUser(email, {
+          failedLoginAttempts: 0,
+          userLockExpiration: undefined
+        });
       }
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.hashedPassword);
     if (!isPasswordCorrect) {
-      const updatedUser = { ...user, failedLoginAttempts: user.failedLoginAttempts + 1 };
-      this.users.set(email, updatedUser);
+      this.repository.updateUser(email, { failedLoginAttempts: user.failedLoginAttempts + 1 });
 
       if (user.failedLoginAttempts === 2) {
-        this.users.set(email, {
-          ...updatedUser,
+        this.repository.updateUser(email, {
+          failedLoginAttempts: user.failedLoginAttempts + 1,
           userLockExpiration: new Date(Date.now() + 1000 * 60 * 5)
         });
         return 'User is locked';
@@ -68,17 +73,14 @@ export class UserService {
   }
 
   findByEmail(email: string): User | undefined {
-    return this.users.get(email);
+    return this.repository.findUserByEmail(email);
   }
 
   findByPhoneNumber(phone: string): User | undefined {
-    return [...this.users.values()].find((user) => user.phoneNumber === phone);
+    return this.repository.findByPhoneNumber(phone);
   }
 
   activateUser(email: string): void {
-    const user = this.findByEmail(email);
-    if (user) {
-      this.users.set(email, { ...user, status: UserStatus.ACTIVE });
-    }
+    this.repository.updateUser(email, { status: UserStatus.ACTIVE });
   }
 }

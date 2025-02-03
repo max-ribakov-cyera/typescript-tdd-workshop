@@ -1,13 +1,14 @@
 import { UserCreationParams } from '../../domain';
+import { faker } from '@faker-js/faker';
 
 export function aUserCreationParams(
   partialUser: Partial<UserCreationParams> = {}
 ): UserCreationParams {
   return {
-    email: 'someEmail@domain.com',
-    address: 'someAddress',
-    name: 'someName',
-    phoneNumber: '555-5555-555',
+    email: faker.internet.email(),
+    address: faker.location.streetAddress(),
+    name: faker.person.fullName(),
+    phoneNumber: faker.phone.number(),
     ...partialUser
   };
 }
