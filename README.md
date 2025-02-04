@@ -54,7 +54,11 @@ Every iteration besides the first will have a **"Lessons Learned Section"** that
 
 [Iteration 5: Phone Number](src/iterations/05-phone-number/README.md)
 
+[Iteration 5: Phone Number Performance](src/iterations/05-phone-number-performance/README.md)
+
 [Iteration 6: Address](src/iterations/06-address/README.md)
+
+[Iteration 6: Address Refactor](src/iterations/06-address-refactor/README.md)
 
 [Iteration 7: User status](src/iterations/07-user-status/README.md)
 
@@ -62,4 +66,8 @@ Every iteration besides the first will have a **"Lessons Learned Section"** that
 
 [Iteration 9: Account Locking](src/iterations/09-account-locking/README.md)
 
+[Iteration 9: Account Locking - Challenge](src/iterations/09-account-locking-challenge/README.md)
+
 [Iteration 10: DB](src/iterations/10-db/README.md)
+
+[Iteration 11: Email Service](src/iterations/11-email-service/README.md)

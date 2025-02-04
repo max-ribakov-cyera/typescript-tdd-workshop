@@ -58,3 +58,5 @@ const randomUsersToSearch = Array.from({ length: numOfUsersToSearch }, () => ({
 ### Story
 
 Customers are asking for the ability to add their address to their profile so that they can receive packages. Let's add address support to our user service.
+
+REQUIRED! BUT NOT UNIQUE
