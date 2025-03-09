@@ -9,12 +9,14 @@ createUser(email: string, name: string, phoneNumber: string): User {
   // 3rd parameter is a good time to start passing an object instead
 }
 ```
-
-With an object:
+ 
+For easier refactoring you can use destructuring in the function declaration and not have to change the implementation of the function.
+You can also destruct the object in the function code.
 
 ```typescript
-createUser(user: User): User {
-    // code
+createUser({email, name, phoneNumber}: User): User {
+    // code alternative to the above
+    // const { email, name, phoneNumber } = user;
 }
 ```
 

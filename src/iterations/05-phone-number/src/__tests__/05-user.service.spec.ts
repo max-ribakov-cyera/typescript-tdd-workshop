@@ -19,7 +19,7 @@ describe(UserService, () => {
     const created = userService.createUser(email, name);
     const maybeUser = userService.findByEmail(email);
 
-    expect(maybeUser).toEqual(created);
+    expect(maybeUser).toStrictEqual(created);
   });
 
   it('should prevent duplicate email registration', () => {
@@ -34,6 +34,10 @@ describe(UserService, () => {
     const userService = new UserService();
 
     expect(() => userService.createUser('invalid-email', name)).toThrow(InvalidEmailError);
+  });
+
+  it.skip('should create a user with a phone number', () => {
+    expect(true).toBe(false);
   });
 
   it.skip('should create a user with a phone number and retrieve him by it', () => {

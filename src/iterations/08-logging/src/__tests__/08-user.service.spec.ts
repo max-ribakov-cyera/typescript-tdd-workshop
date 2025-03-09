@@ -22,7 +22,7 @@ describe(UserService, () => {
       const created = userService.createUser(aUserCreationParams({ email: 'retrive@byEmail.com' }));
       const maybeUser = userService.findByEmail('retrive@byEmail.com');
 
-      expect(maybeUser).toEqual(created);
+      expect(maybeUser).toStrictEqual(created);
     });
 
     it('should prevent duplicate email registration', () => {
@@ -40,12 +40,10 @@ describe(UserService, () => {
     });
 
     it('should create a user with a phone number and retrieve him by it', () => {
-      const user = userService.createUser(
+      userService.createUser(
         aUserCreationParams({ name: 'user-with-phone', phoneNumber: '555-555-5555' })
       );
-      expect(user).toMatchObject({ phoneNumber: '555-555-5555' });
 
-      // test is actually testing two things, creation and retrieval
       const maybeUser = userService.findByPhoneNumber('555-555-5555');
       expect(maybeUser).toMatchObject({
         name: 'user-with-phone'

@@ -18,7 +18,7 @@ describe(UserService, () => {
     const created = userService.createUser(email, name);
     const maybeUser = userService.findByEmail(email);
 
-    expect(maybeUser).toEqual(created);
+    expect(maybeUser).toStrictEqual(created);
   });
 
   it('should prevent duplicate email registration', () => {

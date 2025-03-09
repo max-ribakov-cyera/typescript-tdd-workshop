@@ -2,7 +2,8 @@
 
 ## Key Takeaways:
 
-Usually create request of an entity will not have all of the fields. It's better to create a partial entity and then merge it with the default values.
+Usually create request of an entity will not have all of the fields.
+It's better to create a partial entity and then merge it with the default values.
 
 ```typescript
 createUser(userCreationParams: UserCreationParams): User {

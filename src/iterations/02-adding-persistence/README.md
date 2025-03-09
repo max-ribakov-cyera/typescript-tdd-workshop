@@ -7,7 +7,7 @@ expect(user.email).toBe('jane@dev.com');
 expect(user.name).toBe('Jane Developer');
 ```
 
-Instead of matching each property of an object with it's own assertion, you can use `objectMatching`
+Instead of matching each property of an object with it's own assertion, you can use `toMatchObject` or `toEqual`
 to match on some properties of an object in one assertion.
 
 Try to keep a single assertion per test. This makes it easier to understand what's being tested.

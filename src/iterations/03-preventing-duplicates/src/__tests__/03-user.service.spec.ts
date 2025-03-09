@@ -15,7 +15,7 @@ describe(UserService, () => {
     const created = userService.createUser('jane@dev.com', 'Jane Developer');
     const retrieved = userService.findByEmail('jane@dev.com');
 
-    expect(retrieved).toEqual(created);
+    expect(retrieved).toStrictEqual(created);
   });
 
   it.skip('should prevent duplicate email registration', () => {
