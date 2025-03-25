@@ -4,10 +4,6 @@
 
 almost same tests as in-memory implementation, but with a real database.
 
-bulk insert is a good way to insert multiple records at once.
-
-but hash password is a blocker for bulk insert.
-
 ```typescript
 
 ```

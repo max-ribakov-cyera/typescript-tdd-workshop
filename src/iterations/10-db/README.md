@@ -3,7 +3,7 @@
 ## Key Takeaways:
 
 - You should refactor your code to separate the concerns of your service => [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle).
-  - move the user lookup, creation and update logic to a repository class.
+- move the user lookup, creation and update logic to a repository class.
 
 ```typescript
 // Setup
@@ -29,6 +29,7 @@ DevConnect is growing! Time to switch from in-memory storage to a real database.
 Thanks to our thorough test suite, we can be confident in our new implementation.
 
 Change the UserServiceRepository to be async interface and implement it with a real database.
+Use an in-memory database like SQLite for simplicity.
 
 ```typescript
 export interface UserServiceRepository {

@@ -17,9 +17,7 @@
   "description": "A comprehensive TDD workshop with TypeScript",
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
-    "adze": "^2.2.0",
     "bcrypt": "^5.1.1",
-    "performance-now": "^2.1.0",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
     "tslog": "^4.9.3"

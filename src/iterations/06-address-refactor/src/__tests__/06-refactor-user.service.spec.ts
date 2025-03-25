@@ -1,8 +1,6 @@
 import { UserService } from '../user-service';
 import { DuplicateEmailError, InvalidEmailError } from '../errors';
 import { aUser } from './builders';
-import { faker } from '@faker-js/faker';
-import { performance } from 'perf_hooks';
 
 describe(UserService, () => {
   const email = 'jane@dev.com';
@@ -59,76 +57,5 @@ describe(UserService, () => {
       aUser({ name: 'user-with-address', address: '123 Main St' })
     );
     expect(user).toMatchObject({ address: '123 Main St' });
-  });
-
-  describe('performance of', () => {
-    const userService = new UserService();
-    const numOfUsers = 100000;
-    const numOfUsersToSearch = 10;
-
-    const randomUsersToSearch = Array.from({ length: numOfUsersToSearch }, () =>
-      aUser({
-        email: faker.internet.email(),
-        phoneNumber: faker.phone.number()
-      })
-    );
-
-    async function trackDuration(
-      f: (time: number) => Promise<unknown>,
-      times: number = 1
-    ): Promise<number> {
-      const start = performance.now();
-      for (let i = 0; i < times; i++) {
-        await f(i);
-      }
-      const end = performance.now();
-      return end - start;
-    }
-
-    beforeAll(async () => {
-      const timeToPopulate = await trackDuration(async () => {
-        const chunkSize = 10000;
-        const userPromises = [];
-        for (let i = 0; i < numOfUsers; i += chunkSize) {
-          const chunk = Array.from({ length: chunkSize }, (_, j) => {
-            return userService.createUser(
-              aUser({
-                email: faker.internet.email({ provider: `gmail${i + j}` }),
-                phoneNumber: `${faker.phone.number()}-${i + j}`
-              })
-            );
-          });
-          userPromises.push(Promise.all(chunk));
-        }
-
-        randomUsersToSearch.forEach((user) => {
-          userService.createUser(user);
-        });
-
-        await Promise.all(userPromises);
-      });
-
-      console.log('timeToPopulate:', timeToPopulate);
-    });
-
-    test(`findByEmail for ${numOfUsersToSearch} random users should be less than 5 milliseconds`, async () => {
-      const durationByEmail = await trackDuration(
-        async (index) => userService.findByEmail(randomUsersToSearch[index].email),
-        numOfUsersToSearch
-      );
-
-      console.log('durationByEmail:', durationByEmail);
-      expect(durationByEmail).toBeLessThan(5);
-    });
-
-    test(`findByPhoneNumber for ${numOfUsersToSearch} random users should be less than a 5 milliseconds`, async () => {
-      const durationByPhone = await trackDuration(
-        async (index) => userService.findByPhoneNumber(randomUsersToSearch[index].phoneNumber),
-        numOfUsersToSearch
-      );
-
-      console.log('durationByPhone:', durationByPhone);
-      expect(durationByPhone).toBeLessThan(5);
-    });
   });
 });

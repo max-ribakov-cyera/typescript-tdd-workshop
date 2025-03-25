@@ -1,5 +1,5 @@
 import { DuplicateEmailError, InvalidEmailError } from './errors';
-import { User } from './domain';
+import { User, UserRequest } from './domain';
 
 export class InMemoryUsersRepository {
   private usersByEmail: Map<string, User> = new Map();
@@ -22,7 +22,7 @@ export class InMemoryUsersRepository {
 export class UserService {
   constructor(private readonly repository: InMemoryUsersRepository) {}
 
-  createUser(user: User): User {
+  createUser(user: UserRequest): User {
     const { email } = user;
 
     if (!email.includes('@')) {
@@ -33,9 +33,10 @@ export class UserService {
       throw new DuplicateEmailError('Email already registered');
     }
 
-    this.repository.addUser(user);
+    const createdUser = { ...user, status: 'pending' };
+    this.repository.addUser(createdUser);
 
-    return user;
+    return createdUser;
   }
 
   findByEmail(email: string): User | undefined {
@@ -44,5 +45,13 @@ export class UserService {
 
   findByPhoneNumber(phone: string): User | undefined {
     return this.repository.findByPhoneNumber(phone);
+  }
+
+  activateUser(email: string): User | undefined {
+    const user = this.findByEmail(email);
+    if (user) {
+      user.status = 'active';
+    }
+    return user;
   }
 }

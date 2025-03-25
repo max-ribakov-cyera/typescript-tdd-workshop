@@ -1,7 +1,7 @@
-import { User } from '../../domain';
+import { UserRequest } from '../../domain';
 import { faker } from '@faker-js/faker';
 
-export function aUser(partialUser: Partial<User> = {}): User {
+export function aUserRequest(partialUser: Partial<UserRequest> = {}): UserRequest {
   return {
     email: faker.internet.email(),
     address: faker.location.streetAddress(),

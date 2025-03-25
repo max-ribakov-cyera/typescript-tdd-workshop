@@ -1,8 +1,6 @@
 import { UserService } from '../user-service';
 import { DuplicateEmailError, InvalidEmailError } from '../errors';
 import { aUserCreationParams } from './builders';
-import { faker } from '@faker-js/faker';
-import { performance } from 'perf_hooks';
 import { UserStatus } from '../domain';
 import { InMemoryUsersRepository } from '../repository';
 import { Logger, TslogLooger } from '../logger';
@@ -81,76 +79,6 @@ describe(UserService, () => {
 
     it.skip('should lock user account on the 3rd wrong password login attempt try for 5 minutes', () => {
       expect(true).toBe(false);
-    });
-  });
-
-  describe.skip('performance of', () => {
-    const numOfUsers = 100000;
-    const numOfUsersToSearch = 10;
-
-    const randomUsersToSearch = Array.from({ length: numOfUsersToSearch }, () =>
-      aUserCreationParams({
-        email: faker.internet.email(),
-        phoneNumber: faker.phone.number()
-      })
-    );
-
-    async function trackDuration(
-      f: (time: number) => Promise<unknown>,
-      times: number = 1
-    ): Promise<number> {
-      const start = performance.now();
-      for (let i = 0; i < times; i++) {
-        await f(i);
-      }
-      const end = performance.now();
-      return end - start;
-    }
-
-    beforeAll(async () => {
-      const timeToPopulate = await trackDuration(async () => {
-        const chunkSize = 10000;
-        const userPromises = [];
-        for (let i = 0; i < numOfUsers; i += chunkSize) {
-          const chunk = Array.from({ length: chunkSize }, (_, j) => {
-            return userService.createUser(
-              aUserCreationParams({
-                email: faker.internet.email({ provider: `gmail${i + j}` }),
-                phoneNumber: `${faker.phone.number()}-${i + j}`
-              })
-            );
-          });
-          userPromises.push(Promise.all(chunk));
-        }
-
-        randomUsersToSearch.forEach((user) => {
-          userService.createUser(user);
-        });
-
-        await Promise.all(userPromises);
-      });
-
-      console.log('timeToPopulate:', timeToPopulate);
-    });
-
-    test(`findByEmail for ${numOfUsersToSearch} random users should be less than 5 milliseconds`, async () => {
-      const durationByEmail = await trackDuration(
-        async (index) => userService.findByEmail(randomUsersToSearch[index].email),
-        numOfUsersToSearch
-      );
-
-      console.log('durationByEmail:', durationByEmail);
-      expect(durationByEmail).toBeLessThan(5);
-    });
-
-    test(`findByPhoneNumber for ${numOfUsersToSearch} random users should be less than a 5 milliseconds`, async () => {
-      const durationByPhone = await trackDuration(
-        async (index) => userService.findByPhoneNumber(randomUsersToSearch[index].phoneNumber),
-        numOfUsersToSearch
-      );
-
-      console.log('durationByPhone:', durationByPhone);
-      expect(durationByPhone).toBeLessThan(5);
     });
   });
 
